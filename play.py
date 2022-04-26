@@ -1,4 +1,3 @@
-import re
 import cv2
 import os
 import numpy as np
@@ -8,9 +7,9 @@ import time
 me = tello.Tello()
 me.connect()
 me.streamon()
-me.takeoff()
+#me.takeoff()
 me.send_rc_control(0,0,20,0)
-time.sleep(1.2)
+time.sleep(2.2)
 
 folder_name = 'faces_data'
 
@@ -22,7 +21,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 known_names = ['Arief Setyo Nugroho']
 Output = 'Tidak Diketahui'
 
-w, h = 360, 240
+w, h = 720, 480
 fbRange = [6200, 6800]
 pid = [0.4, 0.4, 0]
 pError = 0
@@ -43,12 +42,9 @@ def findFace(img):
         roi_gray = imgGray[y:y+h, x:x+w]
         ids, dist = recognizer.predict(roi_gray)
 
-
-
         if (dist<50):
             cv2.putText(img, f'{known_names[ids-1]} {round(dist,2)}', (x-20, y-20), font, 1 , (255, 255, 0), 3)
             #print('Known Faces')
-            drone = 0
         else:
             cv2.putText(img, f'{Output} {round(dist,2)}', (x-20, y-20), font, 1 , (255, 255, 0), 3)
             cx = x + w // 2
@@ -94,24 +90,8 @@ while True:
     pError = trackFace(info, w, pid, pError)
     print("Center", info[0], "Area", info[1])
     cv2.imshow("Output", img)
-    key = cv2.waitKey(1) & 0xff
-    if key == 27: # ESC
-        break
-    elif key == ord('w'):
-        me.move_forward(30)
-    elif key == ord('s'):
-        me.move_back(30)
-    elif key == ord('a'):
-        me.move_left(30)
-    elif key == ord('d'):
-        me.move_right(30)
-    elif key == ord('e'):
-        me.rotate_clockwise(30)
-    elif key == ord('q'):
-        me.rotate_counter_clockwise(30)
-    elif key == ord('r'):
-        me.move_up(30)
-    elif key == ord('f'):
-        me.move_down(30)
-    elif key == ord('x'):
+    if cv2.waitKey(1) & 0xff == ord('q'):
         me.land()
+        me.streamoff()
+        break
+q
