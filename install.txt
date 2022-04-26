@@ -1,0 +1,2 @@
+1. pip install djitellopy
+2. pip install opencv-contrib-python
